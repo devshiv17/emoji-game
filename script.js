@@ -1,6 +1,6 @@
 class EmojiPasswordBreaker {
     constructor() {
-        this.emojis = [
+        this.allEmojis = [
             // Faces
             '😊', '😂', '🥰', '😎', '🤔', '😴', '🤗', '🙄', '😇', '🤓',
             '😋', '🤤', '🥳', '😍', '🤩', '😜', '🤪', '😏', '🥺', '😢',
@@ -27,6 +27,7 @@ class EmojiPasswordBreaker {
             '💡', '🔋', '🕯️', '💎', '🏆', '🥇', '🥈', '🥉', '⭐', '🌟',
             '🔥', '⚡', '💧', '🌈', '☀️', '🌙', '⛅', '❄️', '☃️', '🎄'
         ];
+        this.sessionEmojis = [];
         this.passwordLength = 4;
         this.maxAttempts = 6;
         this.secretPassword = [];
@@ -69,6 +70,7 @@ class EmojiPasswordBreaker {
     }
     
     startNewGame() {
+        this.selectSessionEmojis();
         this.secretPassword = this.generateSecretPassword();
         this.revealedPositions = new Array(this.passwordLength).fill(false);
         this.currentGuess = [];
@@ -85,10 +87,15 @@ class EmojiPasswordBreaker {
         this.updateSubmitButton();
     }
     
+    selectSessionEmojis() {
+        const shuffled = [...this.allEmojis].sort(() => 0.5 - Math.random());
+        this.sessionEmojis = shuffled.slice(0, 20);
+    }
+    
     generateSecretPassword() {
         const password = [];
         for (let i = 0; i < this.passwordLength; i++) {
-            const randomEmoji = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+            const randomEmoji = this.sessionEmojis[Math.floor(Math.random() * this.sessionEmojis.length)];
             password.push(randomEmoji);
         }
         return password;
@@ -135,7 +142,7 @@ class EmojiPasswordBreaker {
     
     renderEmojiGrid() {
         this.emojiGridEl.innerHTML = '';
-        this.emojis.forEach(emoji => {
+        this.sessionEmojis.forEach(emoji => {
             const btn = document.createElement('button');
             btn.className = 'emoji-btn';
             btn.textContent = emoji;
