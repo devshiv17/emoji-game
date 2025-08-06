@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Password Breaker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>🔓 Emoji Password Breaker</h1>
+            <p>Crack the secret emoji password!</p>
+        </header>
+        
+        <div class="game-info">
+            <div class="attempts-counter">
+                <span>Attempts remaining: <strong id="remaining-attempts">6</strong></span>
+            </div>
+            <button id="new-game-btn" class="btn btn-secondary">New Game</button>
+        </div>
+        
+        <div class="password-display">
+            <div id="password-slots" class="password-slots">
+                <!-- Password slots will be generated dynamically -->
+            </div>
+        </div>
+        
+        <div class="current-guess">
+            <h3>Your Guess:</h3>
+            <div id="guess-slots" class="guess-slots">
+                <!-- Guess slots will be generated dynamically -->
+            </div>
+            <button id="submit-guess" class="btn btn-primary" disabled>Submit Guess</button>
+        </div>
+        
+        <div class="emoji-picker">
+            <h3>Choose Emojis:</h3>
+            <div id="emoji-grid" class="emoji-grid">
+                <!-- Emoji buttons will be generated dynamically -->
+            </div>
+        </div>
+        
+        <div class="guess-history">
+            <h3>Previous Guesses:</h3>
+            <div id="history-container" class="history-container">
+                <!-- Guess history will be shown here -->
+            </div>
+        </div>
+        
+        <div id="game-result" class="game-result hidden">
+            <div class="result-content">
+                <h2 id="result-title"></h2>
+                <p id="result-message"></p>
+                <div id="secret-password" class="secret-reveal"></div>
+                <button id="play-again" class="btn btn-primary">Play Again</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.game-container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+header h1 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 2.5em;
+}
+
+header p {
+    color: #666;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.attempts-counter {
+    font-size: 1.1em;
+    color: #333;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+    transform: translateY(-2px);
+}
+
+.password-display {
+    margin-bottom: 30px;
+}
+
+.password-slots, .guess-slots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.password-slot, .guess-slot {
+    width: 60px;
+    height: 60px;
+    border: 3px dashed #ddd;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.password-slot.revealed {
+    border: 3px solid #28a745;
+    background: #d4edda;
+}
+
+.guess-slot.filled {
+    border: 3px solid #007bff;
+    background: #e3f2fd;
+}
+
+.guess-slot.active {
+    border: 3px solid #ffc107;
+    background: #fff3cd;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.current-guess {
+    margin-bottom: 30px;
+}
+
+.current-guess h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.emoji-picker {
+    margin-bottom: 30px;
+}
+
+.emoji-picker h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 10px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.emoji-btn {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    background: white;
+    font-size: 2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emoji-btn:hover {
+    border-color: #007bff;
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.emoji-btn:active {
+    transform: scale(0.95);
+}
+
+.guess-history {
+    margin-bottom: 20px;
+}
+
+.guess-history h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.history-container {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background: #f8f9fa;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.history-guess {
+    display: flex;
+    gap: 5px;
+}
+
+.history-emoji {
+    font-size: 1.5em;
+}
+
+.history-feedback {
+    display: flex;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.exact-matches {
+    color: #28a745;
+}
+
+.partial-matches {
+    color: #ffc107;
+}
+
+.game-result {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.game-result.hidden {
+    display: none;
+}
+
+.result-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-content h2 {
+    margin-bottom: 20px;
+    font-size: 2.5em;
+}
+
+.result-content h2.win {
+    color: #28a745;
+}
+
+.result-content h2.lose {
+    color: #dc3545;
+}
+
+.result-content p {
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    color: #666;
+}
+
+.secret-reveal {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+}
+
+.secret-reveal h4 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.secret-password-display {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.secret-emoji {
+    font-size: 2em;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid #28a745;
+}
+
+@media (max-width: 600px) {
+    .game-container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .game-info {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .password-slot, .guess-slot {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+    }
+    
+    .emoji-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+    }
+    
+    .emoji-grid {
+        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+        gap: 8px;
+    }
+    
+    header h1 {
+        font-size: 2em;
+    }
+    
+    header p {
+        font-size: 1em;
+    }
+}
