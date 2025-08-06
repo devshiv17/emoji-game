@@ -126,6 +126,12 @@ header p {
     animation: pulse 1s infinite;
 }
 
+.guess-slot.locked {
+    border: 3px solid #28a745;
+    background: #d4edda;
+    opacity: 0.8;
+}
+
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }

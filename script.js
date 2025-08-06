@@ -4,6 +4,7 @@ class EmojiPasswordBreaker {
         this.passwordLength = 4;
         this.maxAttempts = 6;
         this.secretPassword = [];
+        this.revealedPositions = [];
         this.currentGuess = [];
         this.remainingAttempts = this.maxAttempts;
         this.guessHistory = [];
@@ -43,6 +44,7 @@ class EmojiPasswordBreaker {
     
     startNewGame() {
         this.secretPassword = this.generateSecretPassword();
+        this.revealedPositions = new Array(this.passwordLength).fill(false);
         this.currentGuess = [];
         this.remainingAttempts = this.maxAttempts;
         this.guessHistory = [];
@@ -67,21 +69,35 @@ class EmojiPasswordBreaker {
         for (let i = 0; i < this.passwordLength; i++) {
             const slot = document.createElement('div');
             slot.className = 'password-slot';
-            slot.textContent = '❓';
+            if (this.revealedPositions[i]) {
+                slot.textContent = this.secretPassword[i];
+                slot.classList.add('revealed');
+            } else {
+                slot.textContent = '❓';
+            }
             this.passwordSlotsEl.appendChild(slot);
         }
     }
     
     renderGuessSlots() {
         this.guessSlotsEl.innerHTML = '';
+        let guessIndex = 0;
         for (let i = 0; i < this.passwordLength; i++) {
             const slot = document.createElement('div');
             slot.className = 'guess-slot';
-            if (i < this.currentGuess.length) {
-                slot.textContent = this.currentGuess[i];
-                slot.classList.add('filled');
-            } else if (i === this.currentGuess.length) {
-                slot.classList.add('active');
+            
+            if (this.revealedPositions[i]) {
+                slot.textContent = this.secretPassword[i];
+                slot.classList.add('locked');
+            } else {
+                if (guessIndex < this.currentGuess.length) {
+                    slot.textContent = this.currentGuess[guessIndex];
+                    slot.classList.add('filled');
+                    guessIndex++;
+                } else if (guessIndex === this.currentGuess.length) {
+                    slot.classList.add('active');
+                    guessIndex++;
+                }
             }
             this.guessSlotsEl.appendChild(slot);
         }
@@ -99,7 +115,8 @@ class EmojiPasswordBreaker {
     }
     
     selectEmoji(emoji) {
-        if (this.gameEnded || this.currentGuess.length >= this.passwordLength) return;
+        const unrevealedCount = this.revealedPositions.filter(revealed => !revealed).length;
+        if (this.gameEnded || this.currentGuess.length >= unrevealedCount) return;
         
         this.currentGuess.push(emoji);
         this.renderGuessSlots();
@@ -115,21 +132,27 @@ class EmojiPasswordBreaker {
     }
     
     updateSubmitButton() {
-        this.submitGuessBtn.disabled = this.currentGuess.length !== this.passwordLength || this.gameEnded;
+        const unrevealedCount = this.revealedPositions.filter(revealed => !revealed).length;
+        this.submitGuessBtn.disabled = this.currentGuess.length !== unrevealedCount || this.gameEnded;
     }
     
     submitGuess() {
-        if (this.gameEnded || this.currentGuess.length !== this.passwordLength) return;
+        const unrevealedCount = this.revealedPositions.filter(revealed => !revealed).length;
+        if (this.gameEnded || this.currentGuess.length !== unrevealedCount) return;
         
-        const feedback = this.calculateFeedback(this.currentGuess, this.secretPassword);
+        const fullGuess = this.buildFullGuess();
+        const feedback = this.calculateFeedback(fullGuess, this.secretPassword);
+        
+        this.revealCorrectPositions(fullGuess);
+        
         this.guessHistory.push({
-            guess: [...this.currentGuess],
+            guess: [...fullGuess],
             feedback: feedback
         });
         
-        this.addToGuessHistory(this.currentGuess, feedback);
+        this.addToGuessHistory(fullGuess, feedback);
         
-        if (feedback.exact === this.passwordLength) {
+        if (this.revealedPositions.every(revealed => revealed)) {
             this.endGame(true);
         } else {
             this.remainingAttempts--;
@@ -141,10 +164,35 @@ class EmojiPasswordBreaker {
         }
         
         this.currentGuess = [];
+        this.renderPasswordSlots();
         this.renderGuessSlots();
         this.updateSubmitButton();
     }
     
+    buildFullGuess() {
+        const fullGuess = [];
+        let guessIndex = 0;
+        
+        for (let i = 0; i < this.passwordLength; i++) {
+            if (this.revealedPositions[i]) {
+                fullGuess.push(this.secretPassword[i]);
+            } else {
+                fullGuess.push(this.currentGuess[guessIndex]);
+                guessIndex++;
+            }
+        }
+        
+        return fullGuess;
+    }
+    
+    revealCorrectPositions(guess) {
+        for (let i = 0; i < this.passwordLength; i++) {
+            if (!this.revealedPositions[i] && guess[i] === this.secretPassword[i]) {
+                this.revealedPositions[i] = true;
+            }
+        }
+    }
+
     calculateFeedback(guess, secret) {
         let exact = 0;
         let partial = 0;
