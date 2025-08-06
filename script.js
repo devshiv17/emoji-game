@@ -60,8 +60,12 @@ class EmojiPasswordBreaker {
     }
     
     generateSecretPassword() {
-        const shuffled = [...this.emojis].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, this.passwordLength);
+        const password = [];
+        for (let i = 0; i < this.passwordLength; i++) {
+            const randomEmoji = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+            password.push(randomEmoji);
+        }
+        return password;
     }
     
     renderPasswordSlots() {
@@ -186,11 +190,20 @@ class EmojiPasswordBreaker {
     }
     
     revealCorrectPositions(guess) {
-        for (let i = 0; i < this.passwordLength; i++) {
-            if (!this.revealedPositions[i] && guess[i] === this.secretPassword[i]) {
-                this.revealedPositions[i] = true;
+        // Find all emojis that appear in both guess and secret password
+        const guessedEmojis = new Set(guess.filter((emoji, index) => !this.revealedPositions[index]));
+        
+        // For each emoji that was guessed and exists in secret password
+        guessedEmojis.forEach(emoji => {
+            if (this.secretPassword.includes(emoji)) {
+                // Reveal ALL positions where this emoji appears in the secret password
+                for (let i = 0; i < this.passwordLength; i++) {
+                    if (this.secretPassword[i] === emoji) {
+                        this.revealedPositions[i] = true;
+                    }
+                }
             }
-        }
+        });
     }
 
     calculateFeedback(guess, secret) {
