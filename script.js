@@ -36,6 +36,8 @@ class EmojiPasswordBreaker {
         this.remainingAttempts = this.maxAttempts;
         this.guessHistory = [];
         this.gameEnded = false;
+        this.audioEnabled = true;
+        this.currentTheme = 'default';
         
         this.initializeElements();
         this.setupEventListeners();
@@ -55,12 +57,18 @@ class EmojiPasswordBreaker {
         this.secretPasswordEl = document.getElementById('secret-password');
         this.newGameBtn = document.getElementById('new-game-btn');
         this.playAgainBtn = document.getElementById('play-again');
+        this.themeSelect = document.getElementById('theme-select');
+        this.audioToggleBtn = document.getElementById('audio-toggle');
+        
+        this.initializeAudio();
     }
     
     setupEventListeners() {
         this.submitGuessBtn.addEventListener('click', () => this.submitGuess());
         this.newGameBtn.addEventListener('click', () => this.startNewGame());
         this.playAgainBtn.addEventListener('click', () => this.startNewGame());
+        this.themeSelect.addEventListener('change', (e) => this.changeTheme(e.target.value));
+        this.audioToggleBtn.addEventListener('click', () => this.toggleAudio());
         
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !this.submitGuessBtn.disabled && !this.gameEnded) {
@@ -69,6 +77,122 @@ class EmojiPasswordBreaker {
         });
     }
     
+    initializeAudio() {
+        // Create audio context for web audio API
+        this.audioContext = null;
+        this.clickSound = null;
+        this.victorySound = null;
+        this.defeatSound = null;
+        
+        // Initialize audio on first user interaction
+        document.addEventListener('click', () => this.initAudioContext(), { once: true });
+    }
+    
+    initAudioContext() {
+        if (!this.audioContext) {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.createSounds();
+        }
+    }
+    
+    createSounds() {
+        // Create click sound (short beep)
+        this.clickSound = this.createBeepSound(800, 0.1, 0.1);
+        
+        // Create victory sound (ascending notes)
+        this.victorySound = this.createMelody([
+            {freq: 523, duration: 0.2},
+            {freq: 659, duration: 0.2},
+            {freq: 784, duration: 0.4}
+        ]);
+        
+        // Create defeat sound (descending notes)
+        this.defeatSound = this.createMelody([
+            {freq: 392, duration: 0.3},
+            {freq: 330, duration: 0.3},
+            {freq: 262, duration: 0.5}
+        ]);
+    }
+    
+    createBeepSound(frequency, duration, volume) {
+        return () => {
+            if (!this.audioEnabled || !this.audioContext) return;
+            
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + 0.01);
+            gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + duration);
+            
+            oscillator.start(this.audioContext.currentTime);
+            oscillator.stop(this.audioContext.currentTime + duration);
+        };
+    }
+    
+    createMelody(notes) {
+        return () => {
+            if (!this.audioEnabled || !this.audioContext) return;
+            
+            let currentTime = this.audioContext.currentTime;
+            
+            notes.forEach(note => {
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.value = note.freq;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.1, currentTime + 0.01);
+                gainNode.gain.linearRampToValueAtTime(0, currentTime + note.duration);
+                
+                oscillator.start(currentTime);
+                oscillator.stop(currentTime + note.duration);
+                
+                currentTime += note.duration;
+            });
+        };
+    }
+    
+    playClickSound() {
+        if (this.clickSound) {
+            this.clickSound();
+        }
+    }
+    
+    playVictorySound() {
+        if (this.victorySound) {
+            this.victorySound();
+        }
+    }
+    
+    playDefeatSound() {
+        if (this.defeatSound) {
+            this.defeatSound();
+        }
+    }
+    
+    toggleAudio() {
+        this.audioEnabled = !this.audioEnabled;
+        this.audioToggleBtn.textContent = this.audioEnabled ? '🔊' : '🔇';
+        this.audioToggleBtn.classList.toggle('muted', !this.audioEnabled);
+    }
+    
+    changeTheme(theme) {
+        this.currentTheme = theme;
+        document.body.setAttribute('data-theme', theme === 'default' ? '' : theme);
+    }
+
     startNewGame() {
         this.selectSessionEmojis();
         this.secretPassword = this.generateSecretPassword();
@@ -155,6 +279,7 @@ class EmojiPasswordBreaker {
         const unrevealedCount = this.revealedPositions.filter(revealed => !revealed).length;
         if (this.gameEnded || this.currentGuess.length >= unrevealedCount) return;
         
+        this.playClickSound();
         this.currentGuess.push(emoji);
         this.renderGuessSlots();
         this.updateSubmitButton();
@@ -190,12 +315,14 @@ class EmojiPasswordBreaker {
         this.addToGuessHistory(fullGuess, feedback);
         
         if (this.revealedPositions.every(revealed => revealed)) {
+            this.playVictorySound();
             this.endGame(true);
         } else {
             this.remainingAttempts--;
             this.updateRemainingAttempts();
             
             if (this.remainingAttempts === 0) {
+                this.playDefeatSound();
                 this.endGame(false);
             }
         }

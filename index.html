@@ -17,7 +17,19 @@
             <div class="attempts-counter">
                 <span>Attempts remaining: <strong id="remaining-attempts">6</strong></span>
             </div>
-            <button id="new-game-btn" class="btn btn-secondary">New Game</button>
+            <div class="controls">
+                <div class="theme-selector">
+                    <label for="theme-select">Theme:</label>
+                    <select id="theme-select" class="theme-dropdown">
+                        <option value="default">Default</option>
+                        <option value="ocean">Ocean</option>
+                        <option value="forest">Forest</option>
+                        <option value="sunset">Sunset</option>
+                    </select>
+                </div>
+                <button id="audio-toggle" class="btn btn-icon" title="Toggle Sound">🔊</button>
+                <button id="new-game-btn" class="btn btn-secondary">New Game</button>
+            </div>
         </div>
         
         <div class="password-display">
