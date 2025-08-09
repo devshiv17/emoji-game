@@ -14,10 +14,40 @@
         </header>
         
         <div class="game-info">
-            <div class="attempts-counter">
-                <span>Attempts remaining: <strong id="remaining-attempts">6</strong></span>
+            <div class="hangman-display">
+                <div id="hangman-drawing" class="hangman-drawing">
+                    <div class="gallows">
+                        <div class="base"></div>
+                        <div class="pole"></div>
+                        <div class="beam"></div>
+                        <div class="rope"></div>
+                    </div>
+                    <div class="stick-figure">
+                        <div class="head hidden" id="head"></div>
+                        <div class="body hidden" id="body"></div>
+                        <div class="left-arm hidden" id="left-arm"></div>
+                        <div class="right-arm hidden" id="right-arm"></div>
+                        <div class="left-leg hidden" id="left-leg"></div>
+                        <div class="right-leg hidden" id="right-leg"></div>
+                    </div>
+                </div>
+                <div class="lives-counter">
+                    <span>Lives remaining: <strong id="remaining-lives">6</strong></span>
+                </div>
             </div>
-            <button id="new-game-btn" class="btn btn-secondary">New Game</button>
+            <div class="controls">
+                <div class="theme-selector">
+                    <label for="theme-select">Theme:</label>
+                    <select id="theme-select" class="theme-dropdown">
+                        <option value="default">Default</option>
+                        <option value="ocean">Ocean</option>
+                        <option value="forest">Forest</option>
+                        <option value="sunset">Sunset</option>
+                    </select>
+                </div>
+                <button id="audio-toggle" class="btn btn-icon" title="Toggle Sound">🔊</button>
+                <button id="new-game-btn" class="btn btn-secondary">New Game</button>
+            </div>
         </div>
         
         <div class="password-display">
@@ -59,6 +89,7 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/emoji-js@8.0.0/lib/js/emojione.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
