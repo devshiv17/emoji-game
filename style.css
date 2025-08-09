@@ -168,7 +168,144 @@ header p {
     background: var(--text-secondary);
 }
 
-.attempts-counter {
+.hangman-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.hangman-drawing {
+    position: relative;
+    width: 100px;
+    height: 120px;
+    margin: 0 auto;
+}
+
+.gallows {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.gallows .base {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--text-primary);
+    border-radius: 2px;
+}
+
+.gallows .pole {
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+    width: 4px;
+    height: 100px;
+    background: var(--text-primary);
+    border-radius: 2px;
+}
+
+.gallows .beam {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    width: 40px;
+    height: 4px;
+    background: var(--text-primary);
+    border-radius: 2px;
+}
+
+.gallows .rope {
+    position: absolute;
+    top: 4px;
+    left: 46px;
+    width: 2px;
+    height: 20px;
+    background: var(--text-primary);
+    border-radius: 1px;
+}
+
+.stick-figure {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.stick-figure div {
+    position: absolute;
+    background: var(--text-primary);
+    transition: opacity 0.5s ease;
+}
+
+.stick-figure .hidden {
+    opacity: 0;
+    transform: scale(0) rotate(180deg);
+}
+
+.stick-figure .head {
+    top: 24px;
+    left: 36px;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--text-primary);
+    border-radius: 50%;
+    background: transparent;
+}
+
+.stick-figure .body {
+    top: 44px;
+    left: 45px;
+    width: 2px;
+    height: 35px;
+    border-radius: 1px;
+}
+
+.stick-figure .left-arm {
+    top: 50px;
+    left: 32px;
+    width: 15px;
+    height: 2px;
+    border-radius: 1px;
+    transform: rotate(-30deg);
+    transform-origin: right center;
+}
+
+.stick-figure .right-arm {
+    top: 50px;
+    left: 47px;
+    width: 15px;
+    height: 2px;
+    border-radius: 1px;
+    transform: rotate(30deg);
+    transform-origin: left center;
+}
+
+.stick-figure .left-leg {
+    top: 77px;
+    left: 32px;
+    width: 15px;
+    height: 2px;
+    border-radius: 1px;
+    transform: rotate(30deg);
+    transform-origin: right center;
+}
+
+.stick-figure .right-leg {
+    top: 77px;
+    left: 47px;
+    width: 15px;
+    height: 2px;
+    border-radius: 1px;
+    transform: rotate(-30deg);
+    transform-origin: left center;
+}
+
+.lives-counter {
     font-size: 1.1em;
     color: var(--text-primary);
 }
@@ -336,6 +473,17 @@ header p {
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.history-item.partial-correct {
+    border-left: 4px solid #4caf50;
+    background: linear-gradient(90deg, #e8f5e9 0%, white 20%);
+}
+
+.history-item.all-wrong {
+    border-left: 4px solid #f44336;
+    background: linear-gradient(90deg, #ffebee 0%, white 20%);
 }
 
 .history-guess {
@@ -359,6 +507,14 @@ header p {
 
 .partial-matches {
     color: #ffc107;
+}
+
+.mercy-indicator {
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.8);
 }
 
 .game-result {
@@ -453,6 +609,15 @@ header p {
     .game-info {
         flex-direction: column;
         gap: 15px;
+    }
+    
+    .hangman-display {
+        order: -1;
+    }
+    
+    .hangman-drawing {
+        width: 80px;
+        height: 96px;
     }
     
     .controls {
